@@ -9,15 +9,15 @@ export default function DashboardOverviewPage() {
         {/* Example Dashboard Cards */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2 text-gray-800">Total Users</h2> {/* Added text-gray-800 */}
-          <p className="text-4xl font-bold text-blue-600">1,234</p>
+          <p className="text-4xl font-bold !text-blue-600">1,234</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2 text-gray-800">Sales Today</h2> {/* Added text-gray-800 */}
-          <p className="text-4xl font-bold text-green-600">$5,678</p>
+          <p className="text-4xl font-bold !text-green-600">$5,678</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-2 text-gray-800">New Orders</h2> {/* Added text-gray-800 */}
-          <p className="text-4xl font-bold text-yellow-600">89</p>
+          <p className="text-4xl font-bold !text-yellow-600">89</p>
         </div>
         {/* More cards/widgets */}
       </div>
