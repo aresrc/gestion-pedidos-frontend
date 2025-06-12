@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 
-// Tipo para un Platillo (viene de /api/platillos)
 type Platillo = {
   codigoPlatillo: string;
   nombre: string;
@@ -10,7 +9,6 @@ type Platillo = {
   precio: number;
 };
 
-// Tipo para un Menu (lo que vamos a administrar, viene de /api/menus)
 type MenuType = {
   codigoMenu: string;
   idUsuario: number;
@@ -34,7 +32,6 @@ export default function AdminMenuPage() {
     platillos: [],
   });
 
-  // Efecto para cargar MENÚS y PLATILLOS DISPONIBLES al inicio
   useEffect(() => {
     async function fetchData() {
       try {
@@ -122,11 +119,10 @@ export default function AdminMenuPage() {
     });
   };
 
-  // Manejador para enviar el formulario (Crear o Actualizar MENÚ)
+  // Manejador para enviar el formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // El payload ya es directamente formData porque coincide con MenuDTO
     const payload = formData;
 
     try {
@@ -146,7 +142,6 @@ export default function AdminMenuPage() {
         let errorMessage = `Error al ${editingMenu ? 'actualizar' : 'crear'} el menú.`;
         if (response.status === 400 && errorData) {
             errorMessage += '\nErrores de validación:';
-            // Manejar errores de validación si el backend los devuelve en un formato específico
             for (const key in errorData) {
                 if (Object.prototype.hasOwnProperty.call(errorData, key)) {
                     errorMessage += `\n- ${key}: ${errorData[key]}`;
@@ -158,12 +153,10 @@ export default function AdminMenuPage() {
         throw new Error(errorMessage);
       }
 
-      // Recargar la lista de menús y platillos después de una operación exitosa
-      // (ya que las relaciones pueden haber cambiado o un nuevo menú se añadió)
       alert(`Menú ${editingMenu ? 'actualizado' : 'añadido'} exitosamente!`);
       handleCloseForm();
-      // Refetch all data to ensure consistency
-      setLoading(true); // Mostrar carga mientras se actualiza
+
+      setLoading(true);
       const menusRes = await fetch('http://localhost:8080/api/menus');
       const menusData: MenuType[] = await menusRes.json();
       setMenus(menusData);
@@ -202,7 +195,6 @@ export default function AdminMenuPage() {
     }
   };
 
-  // Función auxiliar para mostrar los nombres de los platillos en la lista
   const getPlatilloNombres = (platilloCodes: string[]) => {
     return platilloCodes.map(code => {
       const platillo = platillosDisponibles.find(p => p.codigoPlatillo === code);
