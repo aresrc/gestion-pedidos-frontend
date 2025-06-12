@@ -1,19 +1,17 @@
-import Image from "next/image";
-import LayoutConSidebar from '@/app/components/LayoutConSidebar';
 
-export default function Home() {
+import Link from 'next/link';
+
+export default function HomePage() {
   return (
-    <LayoutConSidebar>
-      <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-        <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-          {}
-          <h1 className="text-4xl font-bold text-gray-800 text-center mb-8">
-            Bienvenido al Sistema de Gestión de Pedidos
-          </h1>
-          <p className="text-lg text-gray-600 text-center max-w-xl">
-          </p>
-        </main>
-      </div>
-    </LayoutConSidebar>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-blue-500 text-white">
+      <h1 className="text-4xl font-bold mb-4">¡Bienvenido al Gestor de Pedidos!</h1>
+      <p className="text-lg font-bold mb-8">La Casita D. Picarón</p>
+      <Link
+        href="/dashboard"
+        className="bg-white text-blue-500 px-6 py-3 rounded-lg text-lg font-semibold hover:bg-gray-200"
+      >
+        Go to Dashboard
+      </Link>
+    </div>
   );
 }
