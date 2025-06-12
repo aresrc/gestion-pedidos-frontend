@@ -1,7 +1,7 @@
-// app/dashboard/layout.tsx
+
 import React from 'react';
-import Sidebar from '@/components/Sidebar'; // Use @/ for absolute path
-import Navbar from '@/components/Navbar'; // Use @/ for absolute path
+import Sidebar from '@/components/Sidebar';
+import Navbar from '@/components/Navbar';
 
 export default function DashboardLayout({
   children,

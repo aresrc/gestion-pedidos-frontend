@@ -1,5 +1,5 @@
-// components/Navbar.tsx
-'use client'; // This component might have client-side interactions (e.g., logout button)
+
+'use client';
 
 import React from 'react';
 
