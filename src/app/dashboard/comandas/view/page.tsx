@@ -24,11 +24,15 @@ type Comanda = {
   comprobantes: any[];
 };
 
+const ESTADOS_DISPONIBLES = ['Entregado', 'Cancelada'];
+
 export default function ComandaViewPage() {
   const [comandas, setComandas] = useState<Comanda[]>([]);
   const [selectedCodigo, setSelectedCodigo] = useState<string | null>(null);
+  const [selectedEstado, setSelectedEstado] = useState<string>('Entregado');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatingEstado, setUpdatingEstado] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchComandas() {
@@ -68,6 +72,45 @@ export default function ComandaViewPage() {
             ? JSON.stringify(comandaSeleccionada.comprobantes, null, 2)
             : 'No hay comprobantes.')
       );
+    }
+  };
+
+  const cambiarEstado = async () => {
+    if (!selectedCodigo) {
+      alert('Por favor, selecciona una comanda primero.');
+      return;
+    }
+
+    try {
+      setUpdatingEstado(true);
+      const res = await fetch(`http://localhost:8080/api/comandas/${selectedCodigo}/estado`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ estado: selectedEstado }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`Error al cambiar estado: ${res.status} ${res.statusText}`);
+      }
+
+      const comandaActualizada: Comanda = await res.json();
+      
+      // Actualizar la lista de comandas con el nuevo estado
+      setComandas(prev => 
+        prev.map(comanda => 
+          comanda.codigoComanda === selectedCodigo 
+            ? { ...comanda, estado: comandaActualizada.estado }
+            : comanda
+        )
+      );
+
+      alert(`Estado de la comanda ${selectedCodigo} cambiado a: ${selectedEstado}`);
+    } catch (err: any) {
+      alert(`Error al cambiar estado: ${err.message}`);
+    } finally {
+      setUpdatingEstado(false);
     }
   };
 
@@ -112,12 +155,43 @@ export default function ComandaViewPage() {
                 })}
               </tbody>
             </table>
-            <button
-              onClick={verComprobantes}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Ver Comprobantes
-            </button>
+            <div className="mt-4 flex flex-wrap gap-4 items-center">
+              <button
+                onClick={verComprobantes}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Ver Comprobantes
+              </button>
+
+              <div className="flex items-center gap-2">
+                <label htmlFor="estado-select" className="text-sm font-medium text-gray-700">
+                  Cambiar estado a:
+                </label>
+                <select
+                  id="estado-select"
+                  value={selectedEstado}
+                  onChange={(e) => setSelectedEstado(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {ESTADOS_DISPONIBLES.map(estado => (
+                    <option key={estado} value={estado}>
+                      {estado}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={cambiarEstado}
+                  disabled={updatingEstado}
+                  className={`px-4 py-2 text-white rounded ${
+                    updatingEstado
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-700'
+                  }`}
+                >
+                  {updatingEstado ? 'Cambiando...' : 'Cambiar Estado'}
+                </button>
+              </div>
+            </div>
           </>
         )}
       </div>
