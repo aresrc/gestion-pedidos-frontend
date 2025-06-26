@@ -10,7 +10,7 @@ export default function HomePage() {
         href="/login"
         className="bg-white text-blue-500 px-6 py-3 rounded-lg text-lg font-semibold hover:bg-gray-200"
       >
-        Go to Dashboard
+        Ir a Iniciar Sesión
       </Link>
     </div>
   );
