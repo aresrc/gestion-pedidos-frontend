@@ -33,24 +33,24 @@ const login = async (correo: string, contrasena: string) => {
 // Registro real con API
 const register = async (
   correo: string,
-  password: string,
+  contrasena: string,
   nombre: string,
-  apPat: string,
-  apMat: string,
+  apellidoPat: string,
+  apellidoMat: string,
   dni: string,
-  idRol: number
+  id_rol: number
 ) => {
   const response = await fetch('http://localhost:8080/api/usuarios', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       correo,
-      password,
+      contrasena,
       nombre,
-      apPat,
-      apMat,
+      apellidoPat,
+      apellidoMat,
       dni,
-      idRol,
+      id_rol,
     }),
   });
 

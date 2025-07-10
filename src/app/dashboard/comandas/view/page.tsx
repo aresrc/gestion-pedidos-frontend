@@ -3,33 +3,29 @@
 
 import React, { useEffect, useState } from 'react';
 
-type Rol = {
-  idRol: number;
-  nombreRol: string;
-};
-
 type Usuario = {
   idUsuario: number;
   nombre: string;
-  roles: Rol[];
+  roles: string[];
 };
 
 type Comanda = {
   codigoComanda: string;
-  usuario: Usuario;
+  cliente: Usuario;
+  mesero: Usuario;
   numMesa: number;
   fechaPedido: string;
   horaPedido: string;
   estado: string;
-  comprobantes: any[];
+  comprobantes?: any[];
 };
 
-const ESTADOS_DISPONIBLES = ['Entregado', 'Cancelada'];
+const ESTADOS_DISPONIBLES = ['Pendiente', 'Preparando', 'Listo', 'Servido', 'Cancelada'];
 
 export default function ComandaViewPage() {
   const [comandas, setComandas] = useState<Comanda[]>([]);
   const [selectedCodigo, setSelectedCodigo] = useState<string | null>(null);
-  const [selectedEstado, setSelectedEstado] = useState<string>('Entregado');
+  const [selectedEstado, setSelectedEstado] = useState<string>('Servido');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingEstado, setUpdatingEstado] = useState<boolean>(false);
@@ -66,10 +62,11 @@ export default function ComandaViewPage() {
     }
     const comandaSeleccionada = comandas.find(c => c.codigoComanda === selectedCodigo);
     if (comandaSeleccionada) {
+      const comprobantes = comandaSeleccionada.comprobantes || [];
       alert(
         `Comprobantes para ${selectedCodigo}: \n` +
-          (comandaSeleccionada.comprobantes.length > 0
-            ? JSON.stringify(comandaSeleccionada.comprobantes, null, 2)
+          (comprobantes.length > 0
+            ? JSON.stringify(comprobantes, null, 2)
             : 'No hay comprobantes.')
       );
     }
@@ -83,7 +80,7 @@ export default function ComandaViewPage() {
 
     try {
       setUpdatingEstado(true);
-      const res = await fetch(`http://localhost:8080/api/comandas/${selectedCodigo}/estado`, {
+      const res = await fetch(`http://localhost:8080/api/comandas/${selectedCodigo}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +123,8 @@ export default function ComandaViewPage() {
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-2">Código</th>
-                  <th className="border border-gray-300 px-4 py-2">Usuario</th>
+                  <th className="border border-gray-300 px-4 py-2">Cliente</th>
+                  <th className="border border-gray-300 px-4 py-2">Mesero</th>
                   <th className="border border-gray-300 px-4 py-2">Mesa</th>
                   <th className="border border-gray-300 px-4 py-2">Fecha Pedido</th>
                   <th className="border border-gray-300 px-4 py-2">Hora Pedido</th>
@@ -145,7 +143,8 @@ export default function ComandaViewPage() {
                       onClick={() => handleRowClick(comanda.codigoComanda)}
                     >
                       <td className="border border-gray-300 px-4 py-2">{comanda.codigoComanda}</td>
-                      <td className="border border-gray-300 px-4 py-2">{comanda.usuario.nombre}</td>
+                      <td className="border border-gray-300 px-4 py-2">{comanda.cliente.nombre}</td>
+                      <td className="border border-gray-300 px-4 py-2">{comanda.mesero.nombre}</td>
                       <td className="border border-gray-300 px-4 py-2">{comanda.numMesa}</td>
                       <td className="border border-gray-300 px-4 py-2">{comanda.fechaPedido}</td>
                       <td className="border border-gray-300 px-4 py-2">{comanda.horaPedido}</td>
@@ -181,9 +180,9 @@ export default function ComandaViewPage() {
                 </select>
                 <button
                   onClick={cambiarEstado}
-                  disabled={updatingEstado}
+                  disabled={updatingEstado || !selectedCodigo}
                   className={`px-4 py-2 text-white rounded ${
-                    updatingEstado
+                    updatingEstado || !selectedCodigo
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-green-600 hover:bg-green-700'
                   }`}
@@ -191,6 +190,12 @@ export default function ComandaViewPage() {
                   {updatingEstado ? 'Cambiando...' : 'Cambiar Estado'}
                 </button>
               </div>
+              
+              {selectedCodigo && (
+                <div className="ml-auto text-sm text-gray-600">
+                  Comanda seleccionada: <span className="font-semibold">{selectedCodigo}</span>
+                </div>
+              )}
             </div>
           </>
         )}
